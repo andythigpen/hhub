@@ -7,24 +7,10 @@ import json
 import sys
 import argparse
 
-from pkg_resources import iter_entry_points
+from .config import get_default_cfg
+from .plugins import load_plugins
 
 DEFAULT_PORT=11410
-
-class Config(dict):
-    def __init__(self, fname):
-        if not os.path.exists(fname):
-            raise Exception("File does not exist: %s" % fname)
-        with open(fname, 'r') as f:
-            self.fname = fname
-            try:
-                self.update(json.load(f))
-            except ValueError:
-                pass
-
-    def save(self):
-        with open(self.fname, 'w') as f:
-            json.dump(self, f, indent=4)
 
 class NotificationChannel(object):
     def __init__(self):
@@ -45,58 +31,9 @@ class NotificationChannel(object):
                 continue
             observer.on_event(**kwargs)
 
-
-class Plugin(object):
-    def __init__(self, cfg, bus, loop):
-        self.cfg = cfg
-        self._bus = bus
-        self._bus.register(self.channel, self)
-        self._loop = loop
-
-    def on_event(self, **kwargs):
-        pass
-
-    def send_event(self, name, **kwargs):
-        partial = functools.partial(self._bus.notify, name, **kwargs)
-        self._loop.run_in_executor(None, partial)
-
-    def add_timer(self, timeout, cb, *args, **kwargs):
-        partial = functools.partial(cb, *args, **kwargs)
-        return self._loop.call_later(timeout, partial)
-
-class LightsPlugin(Plugin):
-    channel = 'lights'
-
-class PresencePlugin(Plugin):
-    channel = 'presence'
-
 def sighandler(loop, signame):
     logging.info("got signal %s" % signame)
     loop.stop()
-
-def load_plugins(cfg, loop, channel):
-    plugins = []
-    for obj in iter_entry_points(group='hhub.plugin', name=None):
-        cls = obj.load()
-        logging.info('Found %s plugin: %s' % (cls.channel, cls.name))
-        plugin_cfg = cfg['plugins'].get(cls.name, None)
-        if not plugin_cfg or not plugin_cfg.get('enabled', False):
-            continue
-        logging.info('Registered %s plugin: %s' % (cls.channel, cls.name))
-        plugin = cls(plugin_cfg.get('settings', {}), channel, loop)
-        plugins.append(plugin)
-    return plugins
-
-def get_default_cfg():
-    cfgfile = os.path.expanduser("~/.hhub/config.json")
-    if not os.path.exists(os.path.dirname(cfgfile)):
-        os.makedirs(os.path.dirname(cfgfile))
-    if not os.path.exists(cfgfile):
-        with open(cfgfile, 'w') as f:
-            f.write(json.dumps({
-                'plugins': {},
-            }, indent=4))
-    return Config(cfgfile)
 
 @asyncio.coroutine
 def notify_channel(channel, name, event):
