@@ -10,8 +10,6 @@ import argparse
 from .config import get_default_cfg
 from .plugins import load_plugins
 
-DEFAULT_PORT=11410
-
 class NotificationChannel(object):
     def __init__(self):
         self._observers = {}
@@ -55,38 +53,6 @@ def accept_client(channel, reader, writer):
         task = asyncio.Task(notify_channel(channel, name, event))
         result = yield from asyncio.wait_for(task, timeout=5.0)
 
-@asyncio.coroutine
-def connect_and_send(host, port, data):
-    logging.debug("Connecting to %s %d", host, port)
-    reader, writer = yield from asyncio.open_connection(host, port)
-    logging.info("Connected to %s %d", host, port)
-    writer.write(json.dumps(data).encode())
-
-def client():
-    parser = argparse.ArgumentParser(description='Send messages to hhub')
-    parser.add_argument('-t', '--type', dest='event_type', required=True,
-                        help='event type')
-    parser.add_argument('-l', '--level', dest='level', default='INFO',
-                        help='log level')
-    parser.add_argument('data', nargs=argparse.REMAINDER, help='event data')
-    args = parser.parse_args(sys.argv[1:])
-
-    logging.basicConfig(level=getattr(logging, args.level.upper()))
-    data = {}
-    data[args.event_type] = {}
-    try:
-        for arg in args.data:
-            k,v = arg.split(':')
-            data[args.event_type][k] = v
-    except ValueError:
-        logging.error('Invalid data')
-        return
-    cfg = get_default_cfg()
-    port = cfg.get('port', DEFAULT_PORT)
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(connect_and_send('localhost', port, data))
-
-
 def daemon():
     parser = argparse.ArgumentParser(description='Send messages to hhub')
     parser.add_argument('-l', '--level', dest='level', default='INFO',
@@ -106,7 +72,7 @@ def daemon():
         loop.add_signal_handler(getattr(signal, signame),
                                 functools.partial(sighandler, loop, signame))
 
-    port = cfg.get('port', DEFAULT_PORT)
+    port = cfg.get('port')
     co = asyncio.start_server(functools.partial(accept_client, channel),
             port=port, loop=loop)
     logging.info('Listening for connections on %s', port)

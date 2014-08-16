@@ -9,7 +9,7 @@ setup(
     include_package_data=True,
     entry_points = {
         'console_scripts': [
-            'hhub = hhub.hhub:client',
+            'hhub = hhub.client:client',
             'hhubd = hhub.hhub:daemon',
         ],
     },
