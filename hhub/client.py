@@ -4,7 +4,7 @@ import asyncio
 import json
 import sys
 
-from .config import get_default_cfg
+from hhub.config import get_default_cfg
 
 @asyncio.coroutine
 def connect_and_send(host, port, data):
@@ -33,7 +33,7 @@ def client():
         logging.error('Invalid data')
         return
     cfg = get_default_cfg()
-    port = cfg.getint('port')
+    port = cfg.get('port')
     loop = asyncio.get_event_loop()
     loop.run_until_complete(connect_and_send('localhost', port, data))
 

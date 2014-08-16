@@ -7,8 +7,8 @@ import json
 import sys
 import argparse
 
-from .config import get_default_cfg
-from .plugins import load_plugins
+from hhub.config import get_default_cfg
+from hhub.registry import load_plugins
 
 class NotificationChannel(object):
     def __init__(self):

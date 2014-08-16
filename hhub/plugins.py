@@ -25,17 +25,3 @@ class LightsPlugin(Plugin):
 
 class PresencePlugin(Plugin):
     channel = 'presence'
-
-def load_plugins(config, loop, channel):
-    plugins = []
-    for obj in iter_entry_points(group='hhub.plugin', name=None):
-        cls = obj.load()
-        logging.info('Found %s plugin: %s' % (cls.channel, cls.name))
-        plugin_cfg = config['plugins'].getboolean(cls.name, fallback=False)
-        if not plugin_cfg:
-            continue
-        logging.info('Registered %s plugin: %s' % (cls.channel, cls.name))
-        plugin = cls({}, channel, loop)
-        plugins.append(plugin)
-    return plugins
-

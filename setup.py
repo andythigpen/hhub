@@ -10,7 +10,7 @@ setup(
     entry_points = {
         'console_scripts': [
             'hhub = hhub.client:client',
-            'hhubd = hhub.hhub:daemon',
+            'hhubd = hhub.main:daemon',
         ],
     },
 )
