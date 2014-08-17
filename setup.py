@@ -13,5 +13,8 @@ setup(
             'hhubd = hhub.main:daemon',
         ],
     },
+    install_requires=[
+        'flask-bootstrap>=3.2.0.1',
+    ],
 )
 
