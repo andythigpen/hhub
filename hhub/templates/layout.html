@@ -1,9 +1,20 @@
 {% extends "bootstrap/base.html" %}
 
+{% block head %}
+{{ super() }}
+<script type="text/javascript" charset="utf-8">
+  window.App = {
+    Models: {},
+    Views: {},
+    Collections: {},
+  };
+</script>
+{% endblock %}
+
 {% block scripts %}
 {{ super() }}
-<script src="{{url_for('.static', filename='js/underscore-min.js')}}"></script>
-<script src="{{url_for('.static', filename='js/backbone-min.js')}}"></script>
+<script src="{{url_for('static', filename='js/underscore-min.js')}}"></script>
+<script src="{{url_for('static', filename='js/backbone-min.js')}}"></script>
 {% endblock %}
 
 {% block content %}

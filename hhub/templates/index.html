@@ -1,5 +1,19 @@
 {% extends "layout.html" %}
 
+{% block scripts %}
+{{ super() }}
+
+{% include "pluginlist.html" %}
+<script src="{{url_for('.static', filename='js/home.js')}}"></script>
+
+{% if g.plugins %}
+<script type="text/javascript" charset="utf-8">
+  App.plugins.reset({{ g.plugins|tojson }});
+</script>
+{% endif %}
+
+{% endblock %}
+
 {% block main %}
 <div class="container-fluid">
   <div class="panel panel-default">
@@ -7,11 +21,8 @@
       <h3 class="panel-title">Discovered Plugins</h3>
     </div>
     <div class="panel-body">
-      <ul class="list-unstyled">
-        {% for registry, cls in g.plugins %}
-        <li><a href="/{{ cls.plugin_id }}">{{ cls.plugin_id }}</a></li>
-        {% endfor %}
-      </ul>
+      <div class="plugin-list">
+      </div>
     </div>
   </div>
 </div>

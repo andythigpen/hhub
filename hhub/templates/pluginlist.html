@@ -1,0 +1,7 @@
+<script type="text/html" id="plugin-list-tmpl">
+  <ul class="list-unstyled">
+    <% _.each(plugins, function(item, i) { %>
+      <li><a href="<%= item.get("url") %>"><%= item.get("name") %></a></li>
+    <% }); %>
+  </ul>
+</script>

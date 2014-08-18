@@ -16,7 +16,13 @@ for registry, cls in plugins:
 
 @app.route('/')
 def index():
-    g.plugins = discover_plugins(cfg)
+    g.plugins = []
+    for registry, cls in discover_plugins(cfg):
+        g.plugins.append({
+            'name'      : cls.plugin_id,
+            'enabled'   : registry['enabled'],
+            'url'       : '/' + cls.plugin_id,
+        })
     return render_template('index.html')
 
 if __name__ == '__main__':
