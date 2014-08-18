@@ -1,9 +1,18 @@
-{% extends "bootstrap/base.html" %}
+{% extends "layout.html" %}
 
-{% block content %}
-{% include 'nav.html' %}
-
+{% block main %}
 <div class="container-fluid">
-  <div></div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Discovered Plugins</h3>
+    </div>
+    <div class="panel-body">
+      <ul class="list-unstyled">
+        {% for registry, cls in g.plugins %}
+        <li><a href="/{{ cls.plugin_id }}">{{ cls.plugin_id }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 </div>
 {% endblock %}
