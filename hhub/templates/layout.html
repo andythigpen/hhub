@@ -1,5 +1,11 @@
 {% extends "bootstrap/base.html" %}
 
+{% block scripts %}
+{{ super() }}
+<script src="{{url_for('.static', filename='js/underscore-min.js')}}"></script>
+<script src="{{url_for('.static', filename='js/backbone-min.js')}}"></script>
+{% endblock %}
+
 {% block content %}
 {% include 'nav.html' %}
 
