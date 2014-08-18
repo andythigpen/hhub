@@ -1,7 +1,17 @@
 <script type="text/html" id="plugin-list-tmpl">
   <ul class="list-unstyled">
     <% _.each(plugins, function(item, i) { %>
-      <li><a href="<%= item.get("url") %>"><%= item.get("name") %></a></li>
+      <li>
+        <form class="form-inline">
+          <a href="<%= item.get("url") %>"><%= item.get("name") %></a>
+          <div class="checkbox pull-right">
+            <label>
+              <input type="checkbox" value="" class="enable" data-model-index="<%= i %>" <% if (item.get("enabled")) { %>checked="checked"<% } %>>
+              Enabled
+            </label>
+          </div>
+        </form>
+      </li>
     <% }); %>
   </ul>
 </script>

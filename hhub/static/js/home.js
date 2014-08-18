@@ -13,6 +13,9 @@ App.Collections.PluginList = Backbone.Collection.extend({
 
 App.Views.PluginListView = Backbone.View.extend({
   el: '.plugin-list',
+  events: {
+    'change .checkbox': 'toggleEnable'
+  },
   initialize: function() {
     this.listenTo(this.collection, "change", this.render);
     this.listenTo(this.collection, "reset", this.render);
@@ -22,6 +25,11 @@ App.Views.PluginListView = Backbone.View.extend({
   render: function() {
     this.$el.html(this.template({plugins: this.collection.models}));
     return this;
+  },
+  toggleEnable: function(ev) {
+    var model = this.collection.at($(ev.target).data('model-index'));
+    model.set('enabled', ev.target.checked);
+    model.save();
   }
 });
 
