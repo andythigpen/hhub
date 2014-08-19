@@ -1,9 +1,9 @@
 import logging
 from pkg_resources import iter_entry_points
 
-def discover_plugins(cfg):
+def discover_plugins(cfg, name=None):
     discovered = []
-    for obj in iter_entry_points(group='hhub.plugin', name=None):
+    for obj in iter_entry_points(group='hhub.plugin', name=name):
         cls = obj.load()
         logging.info('Found %s plugin: %s' % (cls.channel, cls.plugin_id))
         registry = cfg['plugins'].get(cls.plugin_id, False)

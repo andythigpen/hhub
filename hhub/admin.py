@@ -1,4 +1,4 @@
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, request
 from flask_bootstrap import Bootstrap
 from hhub.config import get_default_cfg
 from hhub.registry import discover_plugins
@@ -9,10 +9,21 @@ app = Flask(__name__)
 app.debug = cfg.get('debug', False)
 Bootstrap(app)
 
-plugins = discover_plugins(cfg)
-for registry, cls in plugins:
+for registry, cls in discover_plugins(cfg):
     if getattr(cls, 'admin', None):
         app.register_blueprint(cls.admin, url_prefix='/%s' % cls.plugin_id)
+
+@app.route('/plugins', methods=['GET', 'POST'])
+def plugins():
+    if request.method == 'POST':
+        r = request.get_json()
+        for registry, _ in discover_plugins(cfg, r['name']):
+            registry['enabled'] = r['enabled']
+        # registry = cfg['plugins'].get(cls.plugin_id, False)
+        cfg.save()
+        return '', 200
+    else:
+        return '', 501
 
 @app.route('/')
 def index():

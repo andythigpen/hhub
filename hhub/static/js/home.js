@@ -8,7 +8,8 @@ App.Models.Plugin = Backbone.Model.extend({
 });
 
 App.Collections.PluginList = Backbone.Collection.extend({
-  model: App.Models.Plugin
+  model: App.Models.Plugin,
+  url: '/plugins'
 });
 
 App.Views.PluginListView = Backbone.View.extend({
