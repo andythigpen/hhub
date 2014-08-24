@@ -10,9 +10,12 @@ from hhub.config import get_default_cfg
 @asyncio.coroutine
 def connect_and_send(host, port, data):
     logging.debug("Connecting to %s %d", host, port)
-    reader, writer = yield from asyncio.open_connection(host, port)
-    logging.info("Connected to %s %d", host, port)
-    writer.write(json.dumps(data).encode())
+    try:
+        reader, writer = yield from asyncio.open_connection(host, port)
+        logging.info("Connected to %s %d", host, port)
+        writer.write(json.dumps(data).encode())
+    finally:
+        writer.close()
 
 def async_send_event(data):
     cfg = get_default_cfg()
