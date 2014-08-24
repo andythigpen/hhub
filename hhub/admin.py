@@ -8,6 +8,7 @@ cfg = get_default_cfg()
 
 app = Flask(__name__)
 app.debug = cfg.get('debug', False)
+app.cfg = cfg
 Bootstrap(app)
 
 for registry, cls in discover_plugins(cfg):
@@ -20,7 +21,6 @@ def plugins():
         r = request.get_json()
         for registry, _ in discover_plugins(cfg, r['name']):
             registry['enabled'] = r['enabled']
-        # registry = cfg['plugins'].get(cls.plugin_id, False)
         cfg.save()
         return '', 200
     else:
