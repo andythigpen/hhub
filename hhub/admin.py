@@ -2,6 +2,7 @@ from flask import Flask, render_template, g, request
 from flask_bootstrap import Bootstrap
 from hhub.config import get_default_cfg
 from hhub.registry import discover_plugins
+from hhub.client import send_event
 
 cfg = get_default_cfg()
 
@@ -24,6 +25,12 @@ def plugins():
         return '', 200
     else:
         return '', 501
+
+@app.route('/event/<etype>', methods=['POST', 'PUT'])
+def event(etype):
+    data = request.get_json()
+    send_event({etype : data})
+    return '', 200
 
 @app.route('/')
 def index():

@@ -49,12 +49,13 @@ def accept_client(channel, reader, writer):
         logging.error('JSON message too large')
         return
     events = json.loads(data.decode())
+    logging.debug('events: %s' % events)
     for name, event in events.items():
         task = asyncio.Task(notify_channel(channel, name, event))
         result = yield from asyncio.wait_for(task, timeout=5.0)
 
 def daemon():
-    parser = argparse.ArgumentParser(description='Send messages to hhub')
+    parser = argparse.ArgumentParser(description='hhub event daemon')
     parser.add_argument('-l', '--level', dest='level', default='INFO',
                         help='log level')
     args = parser.parse_args(sys.argv[1:])
